@@ -30,7 +30,7 @@ const Navbar = async () => {
       </div>
       <div className="flex space-x-2">
         <Button className="bg-black text-white rounded-full p-3 text-xs md:text-sm">
-          Watch tutorial
+          Watch Snaps
         </Button>
         <form>
           <Button className="bg-black text-white rounded-full p-3 text-xs md:text-sm">
