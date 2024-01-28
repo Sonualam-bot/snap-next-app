@@ -25,7 +25,7 @@ export default async function Home() {
                 What are you waiting for?
               </p>
             </div>
-            {true ? (
+            {!session ? (
               <Button
                 asChild
                 className="mt-4 bg-black text-white flex items-center rounded-lg gap-2 mx-auto md:mx-0"
