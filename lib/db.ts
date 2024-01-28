@@ -9,7 +9,7 @@ export async function connectToMongodb(){
     }
     try{
       const conn =  await mongoose.connect(process.env.CONNECTION_URL as string  )
-        cachedConnection = conn.connection
+        cachedConnection = conn.connection;
         console.log("Connected to MongoDB")
         return cachedConnection
     }catch(error){

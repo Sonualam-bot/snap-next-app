@@ -1,9 +1,12 @@
+import { auth } from "@/auth";
 import Navbar from "@/components/shared/navbar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  console.log(session);
   return (
     <div className="bg-[#fffc00] ">
       <div className="min-h-screen flex flex-col items-center justify-center max-w-7xl mx-auto ">
