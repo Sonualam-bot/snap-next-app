@@ -3,42 +3,60 @@ import GitHub from "next-auth/providers/github";
 import User from "./models/userModel";
 import { connectToMongodb } from "./lib/db";
 
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
-	providers: [
-		GitHub({
-			clientId: process.env.AUTH_GITHUB_ID,
-			clientSecret: process.env.AUTH_GITHUB_SECRET,
-		}),
-	],
-	secret: process.env.AUTH_SECRET,
-	callbacks: {
-		async signIn({ account, profile }) {
-			if (account?.provider === "github") {
-				await connectToMongodb();
+  providers: [
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    }),
+  ],
+  secret: process.env.AUTH_SECRET,
+  callbacks: {
+    async session({ session }) {
+      try {
+        await connectToMongodb();
+        if (session.user) {
+          const user = await User.findOne({ email: session.user.email });
+          if (user) {
+            session.user._id === user._id;
+            return session;
+          } else {
+            throw new Error("User not found");
+          }
+        } else {
+          throw new Error("Invalid session");
+        }
+      } catch (error) {
+        console.log(error);
+        throw new Error("Invalid session");
+      }
+    },
+    async signIn({ account, profile }) {
+      if (account?.provider === "github") {
+        await connectToMongodb();
 
-				try {
-					const user = await User.findOne({ email: profile?.email });
+        try {
+          const user = await User.findOne({ email: profile?.email });
 
-					// signup the user if not found
-					if (!user) {
-						const newUser = await User.create({
-							username: profile?.login,
-							email: profile?.email,
-							fullName: profile?.name,
-							avatar: profile?.avatar_url,
-						});
+          // signup the user if not found
+          if (!user) {
+            const newUser = await User.create({
+              username: profile?.login,
+              email: profile?.email,
+              fullName: profile?.name,
+              avatar: profile?.avatar_url,
+            });
 
-						await newUser.save();
-					}
-					return true; // indicate successful sign-in
-				} catch (error) {
-					console.log(error);
-					return false; // indicate failed sign-in
-				}
-			}
+            await newUser.save();
+          }
+          return true; // indicate successful sign-in
+        } catch (error) {
+          console.log(error);
+          return false; // indicate failed sign-in
+        }
+      }
 
-			return false; // indicate failed sign-in
-		},
-	},
+      return false; // indicate failed sign-in
+    },
+  },
 });
