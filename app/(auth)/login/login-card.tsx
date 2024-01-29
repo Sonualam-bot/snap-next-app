@@ -1,8 +1,10 @@
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { signIn } from "@/auth";
 import { authAction } from "@/lib/actions";
+import { useFormState, useFormStatus } from "react-dom";
 
 export default function LoginCard() {
   //inline server action
@@ -10,6 +12,8 @@ export default function LoginCard() {
   //   "use server";
   //   await signIn("github");
   // }
+
+  const [errorMessage, dispatch] = useFormState(authAction, "");
 
   return (
     <>
@@ -24,14 +28,22 @@ export default function LoginCard() {
         >
           Sign Up
         </Link>
+        {errorMessage ? (
+          <p className="text-sm text-red-500">{errorMessage}</p>
+        ) : null}
       </div>
     </>
   );
 }
 
 function LoginButton() {
+  const { pending } = useFormStatus();
   return (
-    <Button className="w-full flex gap-2">
+    <Button
+      className="w-full flex gap-2"
+      disabled={pending}
+      aria-disabled={pending}
+    >
       <Image src={"/github.svg"} width={20} height={20} alt="Github logo" /> Log
       in with Github
     </Button>
