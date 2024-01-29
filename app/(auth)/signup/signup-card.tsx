@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { signIn } from "@/auth";
+import { authAction } from "@/lib/actions";
 
 export default function SignupCard() {
-  async function authAction() {
-    "use server";
-    await signIn("github");
-  }
+  //inline server action
+  // async function authAction() {
+  //   "use server";
+  //   await signIn("github");
+  // }
 
   return (
     <>
